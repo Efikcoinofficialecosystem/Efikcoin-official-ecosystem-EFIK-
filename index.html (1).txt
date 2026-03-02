@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efikcoin Ecosystem - Mainnet | Decentralized Finance on BSC</title>
+    <meta name="description" content="Efikcoin is a decentralized financial ecosystem built to empower individuals through secure staking on Binance Smart Chain (BSC) mainnet.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💰%3C/text%3E%3C/svg%3E">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0"></script>
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Ethers.js for Web3 -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(31, 41, 55, 0.7);
+            border-color: rgba(251, 191, 36, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.1);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Animated Background Grid */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(251, 191, 36, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(251, 191, 36, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        
+        /* Pulse Animation */
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.6); }
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+            color: #000;
+            font-weight: 600;
+            padding: 12px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(251, 191, 36, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.5);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(251, 191, 36, 0.1);
+            border-top: 3px solid #fbbf24;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Stat Counter Animation */
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Transaction Feed Scroll */
+        .transaction-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .transaction-feed::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .transaction-feed::-webkit-scrollbar-track {
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 4px;
+        }
+        
+        .transaction-feed::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+            border-radius: 4px;
+        }
+        
+        /* Map Container */
+        #holderMap {
+            height: 450px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        /* Network Badge */
+        .network-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .network-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .stat-number {
+                font-size: 1.75rem;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            #holderMap {
+                height: 300px;
+            }
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            padding: 16px 24px;
+            border-radius: 12px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Input Styles */
+        .input-field {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-0 border-b">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">💰</span>
+                <div>
+                    <h2 class="text-xl font-bold gradient-text">Efikcoin</h2>
+                    <span class="network-badge text-xs">BSC Mainnet</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#home" class="text-gray-300 hover:text-amber-400 transition">Home</a>
+                <a href="#staking" class="text-gray-300 hover:text-amber-400 transition">Staking</a>
+                <a href="#holders" class="text-gray-300 hover:text-amber-400 transition">Holders</a>
+                <a href="#transactions" class="text-gray-300 hover:text-amber-400 transition">Transactions</a>
+                <a href="#admin" class="text-gray-300 hover:text-amber-400 transition">Admin</a>
+            </div>
+            
+            <button id="connectWalletBtn" class="btn-primary">
+                <i class="fas fa-wallet mr-2"></i>Connect Wallet
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen pt-24 pb-16">
+        <div class="absolute inset-0 grid-bg opacity-20"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Hero Header -->
+            <div class="text-center mb-16 pt-8">
+                <h1 class="text-5xl md:text-7xl font-black gradient-text mb-6">
+                    Efikcoin Ecosystem
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+                    Empowering humanity through decentralized finance on Binance Smart Chain
+                </p>
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
+                    <a href="#staking" class="btn-primary">
+                        <i class="fas fa-coins mr-2"></i>Start Staking
+                    </a>
+                    <a href="https://bscscan.com/address/0xe5f245634af5117Ae1cB93b579F911fCE6ba8b91" target="_blank" 
+                       class="px-8 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition border border-gray-600">
+                        <i class="fas fa-search mr-2"></i>View on BSCScan
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="glass-card p-6 pulse-glow">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400 text-sm font-medium">EFIK Price</span>
+                        <i class="fas fa-chart-line text-amber-400"></i>
+                    </div>
+                    <div class="stat-number" id="tokenPrice">$0.00</div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span id="priceChange" class="text-sm font-semibold">+0.00%</span>
+                        <span class="text-gray-500 text-xs">(24h)</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400 text-sm font-medium">Market Cap</span>
+                        <i class="fas fa-coins text-amber-400"></i>
+                    </div>
+                    <div class="stat-number" id="marketCap">$0</div>
+                    <div class="text-gray-500 text-xs mt-2">Total Supply: 1B EFIK</div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400 text-sm font-medium">Total Holders</span>
+                        <i class="fas fa-users text-amber-400"></i>
+                    </div>
+                    <div class="stat-number" id="holderCount">0</div>
+                    <div class="text-amber-400 text-xs mt-2">
+                        <span id="verifiedCount">0</span> verified
+                    </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400 text-sm font-medium">Your Balance</span>
+                        <i class="fas fa-wallet text-amber-400"></i>
+                    </div>
+                    <div class="stat-number" id="userBalance">--</div>
+                    <div class="text-gray-500 text-xs mt-2" id="balanceUSD">Connect wallet</div>
+                </div>
+            </div>
+
+            <!-- Live Price Chart -->
+            <div class="glass-card p-6 mb-16">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold">
+                        <i class="fas fa-chart-area text-amber-400 mr-2"></i>
+                        Live EFIK Price Chart
+                    </h2>
+                    <div class="flex gap-2">
+                        <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition" onclick="changePriceTimeframe('1D')">1D</button>
+                        <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition" onclick="changePriceTimeframe('7D')">7D</button>
+                        <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition" onclick="changePriceTimeframe('30D')">30D</button>
+                    </div>
+                </div>
+                <div id="priceChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Holder Map -->
+    <section id="holders" class="py-16 bg-black/30">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold gradient-text mb-4">
+                    🌍 EFIK Holders Worldwide
+                </h2>
+                <p class="text-gray-400">Join thousands of holders across the globe</p>
+            </div>
+            
+            <div class="glass-card p-6">
+                <div id="holderMap"></div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-2xl font-bold text-amber-400" id="mapAsia">0</div>
+                        <div class="text-sm text-gray-400">Asia</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-2xl font-bold text-amber-400" id="mapEurope">0</div>
+                        <div class="text-sm text-gray-400">Europe</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-2xl font-bold text-amber-400" id="mapAmericas">0</div>
+                        <div class="text-sm text-gray-400">Americas</div>
+                    </div>
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-2xl font-bold text-amber-400" id="mapAfrica">0</div>
+                        <div class="text-sm text-gray-400">Africa</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Staking Section -->
+    <section id="staking" class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold gradient-text mb-4">
+                    💰 Stake EFIK, Earn Rewards
+                </h2>
+                <p class="text-gray-400">Lock your tokens and earn passive income</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Staking Stats -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold mb-6">Staking Stats</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg">
+                            <span class="text-gray-400">Total Staked</span>
+                            <span class="font-bold text-amber-400" id="totalStaked">0 EFIK</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg">
+                            <span class="text-gray-400">Current APY</span>
+                            <span class="font-bold text-green-400" id="stakingAPY">12.5%</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg">
+                            <span class="text-gray-400">Your Staked</span>
+                            <span class="font-bold" id="userStaked">-- EFIK</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg">
+                            <span class="text-gray-400">Rewards Earned</span>
+                            <span class="font-bold text-amber-400" id="stakingRewards">-- EFIK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stake Interface -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold mb-6">Stake Tokens</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Amount to Stake</label>
+                            <div class="relative">
+                                <input type="number" id="stakeAmount" class="input-field pr-20" placeholder="0.00" min="0" step="0.01">
+                                <button onclick="setMaxStake()" class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 bg-amber-500 hover:bg-amber-600 rounded text-sm font-semibold transition">
+                                    MAX
+                                </button>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                Available: <span id="availableBalance">0</span> EFIK
+                            </div>
+                        </div>
+                        
+                        <button id="stakeBtn" onclick="stakeTokens()" class="btn-primary w-full" disabled>
+                            <i class="fas fa-lock mr-2"></i>Stake EFIK
+                        </button>
+                        
+                        <div class="text-center text-xs text-gray-500">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Minimum stake: 100 EFIK
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unstake Interface -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold mb-6">Unstake & Claim</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Amount to Unstake</label>
+                            <div class="relative">
+                                <input type="number" id="unstakeAmount" class="input-field pr-20" placeholder="0.00" min="0" step="0.01">
+                                <button onclick="setMaxUnstake()" class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 bg-amber-500 hover:bg-amber-600 rounded text-sm font-semibold transition">
+                                    MAX
+                                </button>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                Staked: <span id="stakedBalance">0</span> EFIK
+                            </div>
+                        </div>
+                        
+                        <button id="unstakeBtn" onclick="unstakeTokens()" class="btn-primary w-full bg-gradient-to-r from-red-500 to-orange-500" disabled>
+                            <i class="fas fa-unlock mr-2"></i>Unstake EFIK
+                        </button>
+                        
+                        <button id="claimBtn" onclick="claimRewards()" class="btn-primary w-full bg-gradient-to-r from-green-500 to-emerald-500" disabled>
+                            <i class="fas fa-gift mr-2"></i>Claim Rewards
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reward Calculator -->
+            <div class="glass-card p-6 mt-8">
+                <h3 class="text-xl font-bold mb-6">
+                    <i class="fas fa-calculator text-amber-400 mr-2"></i>
+                    Reward Calculator
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Stake Amount</label>
+                        <input type="number" id="calcAmount" class="input-field" placeholder="1000" min="0" oninput="calculateRewards()">
+                    </div>
+                    
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-sm text-gray-400 mb-1">Daily Rewards</div>
+                        <div class="text-xl font-bold text-amber-400" id="dailyReward">0 EFIK</div>
+                    </div>
+                    
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-sm text-gray-400 mb-1">Monthly Rewards</div>
+                        <div class="text-xl font-bold text-amber-400" id="monthlyReward">0 EFIK</div>
+                    </div>
+                    
+                    <div class="text-center p-4 bg-gray-800/50 rounded-lg">
+                        <div class="text-sm text-gray-400 mb-1">Yearly Rewards</div>
+                        <div class="text-xl font-bold text-amber-400" id="yearlyReward">0 EFIK</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transaction Feed -->
+    <section id="transactions" class="py-16 bg-black/30">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold gradient-text mb-4">
+                    ⚡ Live Global Transactions
+                </h2>
+                <p class="text-gray-400">Real-time blockchain activity</p>
+            </div>
+
+            <div class="glass-card p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-400">Live</span>
+                        </div>
+                        <span class="text-sm text-gray-500" id="txCount">0 transactions</span>
+                    </div>
+                    
+                    <button onclick="refreshTransactions()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <div class="transaction-feed space-y-3" id="transactionList">
+                    <!-- Transactions will be populated here -->
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-3xl mb-4"></i>
+                        <div>Loading transactions...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gas Credit System -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="glass-card p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-3xl font-bold gradient-text mb-4">
+                            ⛽ Gas Credit System
+                        </h2>
+                        <p class="text-gray-400 mb-6">
+                            Purchase gas credits with EFIK tokens to cover transaction fees. 
+                            One-time payment for seamless transactions.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg">
+                                <span class="text-gray-400">Your Gas Credits</span>
+                                <span class="font-bold text-amber-400" id="userGasCredit">0 BNB</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg">
+                                <span class="text-gray-400">Exchange Rate</span>
+                                <span class="font-bold">1000 EFIK = 0.01 BNB</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">EFIK Amount</label>
+                                <input type="number" id="gasCreditAmount" class="input-field" placeholder="1000" min="1000" step="1000">
+                                <div class="text-xs text-gray-500 mt-1">
+                                    Minimum: 1000 EFIK
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-gray-800/50 rounded-lg">
+                                <div class="text-sm text-gray-400 mb-1">You will receive</div>
+                                <div class="text-2xl font-bold text-amber-400" id="gasCreditReceive">0 BNB</div>
+                            </div>
+                            
+                            <button id="purchaseGasBtn" onclick="purchaseGasCredit()" class="btn-primary w-full" disabled>
+                                <i class="fas fa-gas-pump mr-2"></i>Purchase Gas Credit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <section id="admin" class="py-16 bg-black/30">
+        <div class="container mx-auto px-4">
+            <div class="glass-card p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold gradient-text">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        Admin Panel
+                    </h2>
+                    <div id="adminBadge" class="hidden px-4 py-2 bg-red-500/20 border border-red-500/50 rounded-lg text-sm font-semibold text-red-400">
+                        <i class="fas fa-crown mr-2"></i>Contract Owner
+                    </div>
+                </div>
+
+                <div id="adminContent" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Contract Info -->
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-bold mb-4">Contract Info</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Address:</span>
+                                    <span class="font-mono text-xs">0xe5f2...8b91</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Network:</span>
+                                    <span class="text-green-400">BSC Mainnet</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Version:</span>
+                                    <span>V3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pause Contract -->
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-bold mb-4">Emergency Controls</h3>
+                            <button onclick="pauseContract()" class="btn-primary w-full bg-gradient-to-r from-red-500 to-orange-500 mb-3">
+                                <i class="fas fa-pause mr-2"></i>Pause Contract
+                            </button>
+                            <button onclick="unpauseContract()" class="btn-primary w-full bg-gradient-to-r from-green-500 to-emerald-500">
+                                <i class="fas fa-play mr-2"></i>Unpause Contract
+                            </button>
+                        </div>
+
+                        <!-- Update APY -->
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-bold mb-4">Update Staking APY</h3>
+                            <input type="number" id="newAPY" class="input-field mb-3" placeholder="12.5" step="0.1" min="0" max="100">
+                            <button onclick="updateAPY()" class="btn-primary w-full">
+                                <i class="fas fa-percentage mr-2"></i>Update APY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminLogin" class="text-center py-12">
+                    <i class="fas fa-lock text-6xl text-gray-600 mb-4"></i>
+                    <p class="text-gray-400 mb-4">Connect with contract owner wallet to access admin panel</p>
+                    <button onclick="document.getElementById('connectWalletBtn').click()" class="btn-primary">
+                        Connect Wallet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-3xl">💰</span>
+                        <h3 class="text-xl font-bold gradient-text">Efikcoin</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Empowering humanity through decentralized finance on Binance Smart Chain.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-amber-400 transition">Whitepaper</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Documentation</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Tokenomics</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Roadmap</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-4">Community</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-amber-400 transition">Telegram</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Twitter</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Discord</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Medium</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-4">Contract</h4>
+                    <div class="text-sm text-gray-400 space-y-2">
+                        <div class="break-all">
+                            <span class="block text-gray-500 mb-1">Address:</span>
+                            <code class="text-amber-400">0xe5f245634af5117Ae1cB93b579F911fCE6ba8b91</code>
+                        </div>
+                        <a href="https://bscscan.com/address/0xe5f245634af5117Ae1cB93b579F911fCE6ba8b91" 
+                           target="_blank" 
+                           class="inline-block mt-2 text-amber-400 hover:text-amber-300 transition">
+                            <i class="fas fa-external-link-alt mr-1"></i>View on BSCScan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                <p>&copy; 2026 Efikcoin Ecosystem. All rights reserved.</p>
+                <p class="mt-2">
+                    <span class="text-green-400">● </span>BSC Mainnet | Chain ID: 56
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/web3.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
