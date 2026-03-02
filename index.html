@@ -3,33 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efikcoin Official Ecosystem | Mainnet Hub</title>
+    <title>EFIK Terminal | Efikcoin Eternal Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #0b0e11; color: #ffffff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
-        .hub-container { max-width: 800px; margin: auto; background: #1e2329; padding: 40px; border-radius: 20px; border: 1px solid #f3ba2f; box-shadow: 0px 10px 30px rgba(0,0,0,0.5); }
-        .logo { width: 150px; border-radius: 50%; border: 3px solid #f3ba2f; margin-bottom: 20px; }
-        h1 { color: #f3ba2f; font-size: 2.2em; }
-        p { color: #eaeaea; line-height: 1.6; }
-        /* The Engine Frame */
-        iframe { width: 100%; height: 650px; border: none; border-radius: 15px; background: #ffffff; margin-top: 20px; }
-        .admin-tag { font-size: 0.7em; opacity: 0.4; margin-top: 20px; word-break: break-all; }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+        body { background-color: #020617; color: #f8fafc; font-family: 'Space Grotesk', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(12px); }
+        .neon-text { text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); transition: all 0.3s; }
+        .btn-primary:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: translateY(-2px); }
     </style>
-</head>google-site-verification=OgTlHtifZv30VGV4_oPPnysYA5jx0sS6xq7NHhidOr8
-<body>
-    <div class="hub-container">
-        <img src="https://raw.githubusercontent.com/Efikcoinofficialecosystem/Efikcoin-official-ecosystem-EFIK-/main/1770763155521.png" class="logo" alt="EFIK Logo">
-        
-        <h1>Efikcoin Official Hub</h1>
-        <p>The Kenna City is live on BSC Mainnet. Connect your wallet to interact with the $EFIK ecosystem.</p>
-        
-        <iframe
-            src="https://embed.thirdweb.com/staking/56/0x000878488CF09c828fdF1fe4C677cf1874B2B02a?clientId=fa118a7a7002e14f41b5686fad668a33"
-        ></iframe>
+</head>
+<body class="min-h-screen">
 
-        <div class="admin-tag">
-            Token: 0x021833b1418ab79a746d3994e13ee8c60ce16412 <br>
-            Admin: 0xc5ad5cfcf81ad63a94227334b898eafce6b27cca
+    <!-- Header -->
+    <nav class="max-w-7xl mx-auto p-6 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xl">E</div>
+            <h1 class="text-xl font-bold tracking-tighter neon-text">EFIK TERMINAL</h1>
         </div>
-    </div>
+        <button id="connectBtn" class="btn-primary px-6 py-2 rounded-xl font-bold text-sm">
+            CONNECT WALLET
+        </button>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        <!-- Hero Stats -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="glass p-6 rounded-3xl">
+                <p class="text-blue-400 text-xs font-bold uppercase mb-2">Total Supply</p>
+                <h3 id="totalSupply" class="text-2xl font-bold">Loading...</h3>
+                <p class="text-gray-500 text-xs mt-1">EFIK Tokens</p>
+            </div>
+            <div class="glass p-6 rounded-3xl border-l-4 border-l-blue-500">
+                <p class="text-blue-400 text-xs font-bold uppercase mb-2">Your Balance</p>
+                <h3 id="userBalance" class="text-2xl font-bold">0.00</h3>
+                <p id="walletAddressDisplay" class="text-gray-500 text-xs mt-1 truncate tracking-widest">Connect Wallet</p>
+            </div>
+            <div class="glass p-6 rounded-3xl">
+                <p class="text-purple-400 text-xs font-bold uppercase mb-2">Network Status</p>
+                <h3 class="text-2xl font-bold text-green-400">Online</h3>
+                <p class="text-gray-500 text-xs mt-1">BNB Smart Chain</p>
+            </div>
+        </div>
+
+        <!-- Action Tools -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Left: Chart & Links -->
+            <div class="space-y-6">
+                <h2 class="text-3xl font-bold">Ecosystem <span class="text-blue-500">Tools</span></h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="https://pancakeswap.finance/swap?outputCurrency=0x9F8C29E496ECB6C39c221458f211234DfCB233E0" target="_blank" class="glass p-4 rounded-2xl hover:bg-slate-800 transition flex items-center gap-3">
+                        <i class="fas fa-exchange-alt text-orange-400"></i>
+                        <span>Trade on PancakeSwap</span>
+                    </a>
+                    <a href="https://bscscan.com/token/0x9F8C29E496ECB6C39c221458f211234DfCB233E0" target="_blank" class="glass p-4 rounded-2xl hover:bg-slate-800 transition flex items-center gap-3">
+                        <i class="fas fa-search text-blue-400"></i>
+                        <span>View Contract</span>
+                    </a>
+                    <a href="https://dexscreener.com/bsc/0x7FAbe1cc407f0e01c3cdF5Cc05744f8D98bC70B6" target="_blank" class="glass p-4 rounded-2xl hover:bg-slate-800 transition flex items-center gap-3 text-sm">
+                        <i class="fas fa-chart-line text-green-400"></i>
+                        <span>Live Chart (DexScreener)</span>
+                    </a>
+                    <button onclick="copyPair()" class="glass p-4 rounded-2xl hover:bg-slate-800 transition flex items-center gap-3 text-sm">
+                        <i class="fas fa-tint text-cyan-400"></i>
+                        <span>Copy Pool Pair Address</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Live Token Info -->
+            <div class="glass p-8 rounded-[2rem] relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <i class="fas fa-shield-alt text-9xl"></i>
+                </div>
+                <h4 class="text-xl font-bold mb-6">Security & Identity</h4>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase mb-1">Token Contract</p>
+                        <p class="font-mono text-sm break-all text-blue-300">0x9F8C29E496ECB6C39c221458f211234DfCB233E0</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase mb-1">Liquidity Pair Address</p>
+                        <p class="font-mono text-sm break-all text-purple-300">0x7FAbe1cc407f0e01c3cdF5Cc05744f8D98bC70B6</p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800 flex justify-between">
+                        <span class="text-sm">Verified Contract</span>
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const tokenAddress = "0x9F8C29E496ECB6C39c221458f211234DfCB233E0";
+        const pairAddress = "0x7FAbe1cc407f0e01c3cdF5Cc05744f8D98bC70B6";
+        
+        const simpleAbi = [
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+            "function balanceOf(address) view returns (uint256)",
+            "function totalSupply() view returns (uint256)",
+            "function decimals() view returns (uint8)"
+        ];
+
+        let provider, signer, contract;
+
+        async function init() {
+            // Load Public Data (Even if wallet not connected)
+            const bscRpc = "https://bsc-dataseed.binance.org/";
+            const publicProvider = new ethers.providers.JsonRpcProvider(bscRpc);
+            const publicContract = new ethers.Contract(tokenAddress, simpleAbi, publicProvider);
+            
+            try {
+                const supply = await publicContract.totalSupply();
+                const decimals = await publicContract.decimals();
+                document.getElementById('totalSupply').innerText = 
+                    parseFloat(ethers.utils.formatUnits(supply, decimals)).toLocaleString();
+            } catch (e) { console.error("Data fetch error", e); }
+        }
+
+        async function connect() {
+            if (window.ethereum) {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    contract = new ethers.Contract(tokenAddress, simpleAbi, signer);
+
+                    // Update UI
+                    document.getElementById('connectBtn').innerText = "Connected";
+                    document.getElementById('walletAddressDisplay').innerText = address;
+                    
+                    // Get User Balance
+                    const balance = await contract.balanceOf(address);
+                    const decimals = await contract.decimals();
+                    document.getElementById('userBalance').innerText = 
+                        parseFloat(ethers.utils.formatUnits(balance, decimals)).toLocaleString();
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Connection failed!");
+                }
+            } else {
+                alert("Please open this page in the MetaMask App Browser.");
+            }
+        }
+
+        function copyPair() {
+            navigator.clipboard.writeText(pairAddress);
+            alert("Pair Address Copied!");
+        }
+
+        document.getElementById('connectBtn').addEventListener('click', connect);
+        window.addEventListener('load', init);
+    </script>
 </body>
-</html>
+                        </html>
